@@ -1,8 +1,11 @@
 ## Flavius Popan
 ## 8/20/2015
 
+library(plyr); library(dplyr)
+
 ## The function below joins all the training and test data sets into one
-joinSets <- function(directory="UCI HAR Dataset") {
+joinSets <- function() {
+    directory <- "UCI HAR Dataset"
     ## Find all test files
     testFiles <- list.files(paste(directory, "/test", sep=""), 
                             pattern="*.txt", full.names=TRUE)
@@ -10,22 +13,37 @@ joinSets <- function(directory="UCI HAR Dataset") {
     trainFiles <- list.files(paste(directory, "/train", sep=""), 
                              pattern="*.txt", full.names=TRUE)
     
-    ## Join specific test & training files together first
     subjectData <- rbind(read.table(testFiles[1]), read.table(trainFiles[1]))
     xData <- rbind(read.table(testFiles[2]), read.table(trainFiles[2]))
     yData <- rbind(read.table(testFiles[3]), read.table(trainFiles[3]))
+    activity <- read.table(paste(directory, "/activity_labels.txt", sep=""))
+    features <- read.table(paste(directory, "/features.txt", sep=""))
     
-    ## Merge features data with x data 
-    colnames(xData) <- features[,2]
-    
-    ## Merge actvity labels with y data
-    mergedY <- merge(yData, activity_labels, by.x="V1", all = TRUE)
-    ## Give descriptive column names
-    colnames(mergedY) <- c("ACTIVITY_ID", "ACTIVITY_DESC")
-    colnames(subjectData) <- c("SUBJECT_ID")
+    ## Use plyr join to preserve order
+    mergedY <- join(yData, activity)
     
     ## Combine all 3 data tables into one
-    initMain <- cbind(subjectData, mergedY, xData)
+    fullFrame <- cbind(subjectData, mergedY, xData)
     
-    return initMain
+    ## Drop the Activity ID column
+    fullFrame <- fullFrame[, -c(2)]
+    
+    ## 
+    colNameVector <- c("Subject", "Activity")
+    colNameVector <- append(colNameVector, as.character(features[,2]))
+    
+    colnames(fullFrame) <- colNameVector
+    
+    return(fullFrame)
+}
+
+## STEP 1
+fullFrame <- joinSets()
+
+limitMeasurements <- function(fullFrame) {
+    meanCols <- grep("mean()", colnames(fullFrame), value = TRUE)
+    stdCols <- grep("std()", colnames(fullFrame), value = TRUE)
+    goodCols <- c("Subject", "Activity")
+    goodCols <- append(goodCols, c(meanCols, stdCols))
+    goodCols <- sort(goodCols)
 }
