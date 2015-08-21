@@ -43,7 +43,11 @@ fullFrame <- joinSets()
 limitMeasurements <- function(fullFrame) {
     meanCols <- grep("mean()", colnames(fullFrame), value = TRUE)
     stdCols <- grep("std()", colnames(fullFrame), value = TRUE)
-    goodCols <- c("Subject", "Activity")
-    goodCols <- append(goodCols, c(meanCols, stdCols))
-    goodCols <- sort(goodCols)
+    goodCols <- c("Subject", "Activity", c(meanCols, stdCols))
+    
+    focusFrame <- fullFrame[, goodCols]
+    return(focusFrame)
 }
+
+## STEP 2
+focusFrame <- limitMeasurements(fullFrame)
