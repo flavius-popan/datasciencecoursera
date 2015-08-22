@@ -1,13 +1,5 @@
 ## Tida Data Code Book
 
----
-Author: "Flavius Popan"
-Date: "August 21, 2015"
-Course: "Getting & Cleaning Data"
-Assignment: "Tidy Data Course Project"
-Version: 0.1
----
-
 #### Introduction
 This code book aims to help the user understand the data produced by the 
 run_analysis.R script.
