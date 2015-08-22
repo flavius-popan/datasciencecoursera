@@ -45,3 +45,7 @@ makeTidyData()
 from the console. After a few seconds, **TidyData.txt** will be created in the
 current directory. If the folder is in a different location or named differently,
 pass it's current location to the makeTidyData function.
+
+#### Assumptions
+This project assumes the names of the files and thier structure has not changed
+from the initial data set provided in this repository.
